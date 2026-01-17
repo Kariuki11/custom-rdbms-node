@@ -1,0 +1,24 @@
+{
+  "name": "custom-rdbms",
+  "version": "1.0.0",
+  "description": "A lightweight RDBMS backend with SQL interface and HTTP API",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "repl": "node db/repl/repl.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "setup-demo": "node scripts/setup-demo.js"
+  },
+  "keywords": ["rdbms", "database", "sql", "backend"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
