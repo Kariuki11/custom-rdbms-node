@@ -298,15 +298,5 @@ Once you have it running:
 3. **Try the REPL** - Experiment with SQL queries and see what happens
 4. **Modify Things** - Add a feature, break something, fix it. That's how you learn!
 
-## Final Thoughts
-
-This project represents a complete understanding of database fundamentals. Every line of code was written to demonstrate a concept, solve a problem, or make something work. There are no black boxes—if you read the code, you'll understand exactly what's happening.
-
-The frontend is minimal because the backend is the star. The backend is where the real engineering happens, where the database concepts come to life, and where the learning value exists.
-
-Enjoy exploring it, and feel free to dig into the code. Everything is commented and organized to be as clear as possible.
-
----
-
 **Built with:** Node.js, JavaScript, HTML, CSS  
 **License:** MIT
