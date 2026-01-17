@@ -26,12 +26,16 @@ function executeJoin(ast, database) {
   // Get join condition columns
   const { left: leftColumn, right: rightColumn } = join.on;
 
+  // Extract column names (handle table.column syntax)
+  const leftColName = leftColumn.includes('.') ? leftColumn.split('.').pop() : leftColumn;
+  const rightColName = rightColumn.includes('.') ? rightColumn.split('.').pop() : rightColumn;
+
   // Validate columns exist
-  if (!leftTable.getColumn(leftColumn)) {
-    throw new Error(`Column "${leftColumn}" not found in table "${tableName}"`);
+  if (!leftTable.getColumn(leftColName)) {
+    throw new Error(`Column "${leftColName}" not found in table "${tableName}"`);
   }
-  if (!rightTable.getColumn(rightColumn)) {
-    throw new Error(`Column "${rightColumn}" not found in table "${join.table}"`);
+  if (!rightTable.getColumn(rightColName)) {
+    throw new Error(`Column "${rightColName}" not found in table "${join.table}"`);
   }
 
   // Get all rows from both tables
@@ -46,8 +50,8 @@ function executeJoin(ast, database) {
   if (useIndexJoin) {
     // Index join: O(n) where n is number of left rows
     for (const leftRow of leftRows) {
-      const leftValue = leftRow[leftColumn];
-      const matchingRightIndices = rightTable.indexes[rightColumn].find(leftValue);
+      const leftValue = leftRow[leftColName];
+      const matchingRightIndices = rightTable.indexes[rightColName].find(leftValue);
       
       for (const rightIdx of matchingRightIndices) {
         const rightRow = rightRows[rightIdx];
@@ -63,7 +67,7 @@ function executeJoin(ast, database) {
     // Nested loop join: O(n*m) where n and m are row counts
     for (const leftRow of leftRows) {
       for (const rightRow of rightRows) {
-        if (leftRow[leftColumn] === rightRow[rightColumn]) {
+        if (leftRow[leftColName] === rightRow[rightColName]) {
           const joinedRow = _createJoinedRow(leftRow, rightRow, tableName, join.table);
           
           // Apply WHERE clause if present

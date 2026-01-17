@@ -16,7 +16,8 @@ class Column {
     this.name = name;
     this.type = type.toUpperCase();
     this.primaryKey = constraints.primaryKey || false;
-    this.unique = constraints.unique || false;
+    // Primary keys are always unique
+    this.unique = constraints.unique || this.primaryKey || false;
     
     // Validate type
     const validTypes = ['INT', 'TEXT', 'BOOLEAN'];

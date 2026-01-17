@@ -188,6 +188,18 @@ class Tokenizer {
       return { type: TokenType.OPERATOR, value: operator };
     }
 
+    // Asterisk (for SELECT *)
+    if (this.currentChar === '*') {
+      this._advance();
+      return { type: TokenType.PUNCTUATION, value: '*' };
+    }
+
+    // Dot (for table.column syntax)
+    if (this.currentChar === '.') {
+      this._advance();
+      return { type: TokenType.PUNCTUATION, value: '.' };
+    }
+
     // Punctuation
     if (['(', ')', ',', ';'].includes(this.currentChar)) {
       const punctuation = this.currentChar;

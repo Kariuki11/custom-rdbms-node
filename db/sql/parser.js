@@ -85,18 +85,37 @@ class Parser {
       return ['*'];
     }
 
-    // Parse first column
-    const firstCol = this._expect(TokenType.IDENTIFIER);
-    columns.push(firstCol.value);
+    // Parse first column (may be table.column)
+    const firstCol = this._parseColumnName();
+    columns.push(firstCol);
 
     // Parse additional columns
     while (this._match(TokenType.PUNCTUATION, ',')) {
       this._advance(); // Skip comma
-      const col = this._expect(TokenType.IDENTIFIER);
-      columns.push(col.value);
+      const col = this._parseColumnName();
+      columns.push(col);
     }
 
     return columns;
+  }
+
+  /**
+   * Parses a column name, which may be a simple identifier or table.column
+   * @private
+   * @returns {string} - Column name (may include table prefix)
+   */
+  _parseColumnName() {
+    const firstPart = this._expect(TokenType.IDENTIFIER);
+    let columnName = firstPart.value;
+
+    // Check if followed by dot (table.column syntax)
+    if (this._match(TokenType.PUNCTUATION, '.')) {
+      this._advance(); // Skip dot
+      const secondPart = this._expect(TokenType.IDENTIFIER);
+      columnName = `${columnName}.${secondPart.value}`;
+    }
+
+    return columnName;
   }
 
   /**
@@ -111,9 +130,8 @@ class Parser {
 
     this._advance(); // Skip WHERE
 
-    // Parse column
-    const columnToken = this._expect(TokenType.IDENTIFIER);
-    const column = columnToken.value;
+    // Parse column (may be table.column)
+    const column = this._parseColumnName();
 
     // Parse operator
     const operatorToken = this._expect(TokenType.OPERATOR);
@@ -156,16 +174,14 @@ class Parser {
     // Parse ON clause
     this._expect(TokenType.KEYWORD, 'ON');
 
-    // Parse left column
-    const leftToken = this._expect(TokenType.IDENTIFIER);
-    const left = leftToken.value;
+    // Parse left column (may be table.column)
+    const left = this._parseColumnName();
 
     // Parse =
     this._expect(TokenType.OPERATOR, '=');
 
-    // Parse right column
-    const rightToken = this._expect(TokenType.IDENTIFIER);
-    const right = rightToken.value;
+    // Parse right column (may be table.column)
+    const right = this._parseColumnName();
 
     return {
       type: 'INNER', // We only support INNER JOIN for now

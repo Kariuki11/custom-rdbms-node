@@ -15,7 +15,8 @@ class Index {
   constructor(columnName, isPrimaryKey = false, isUnique = false) {
     this.columnName = columnName;
     this.isPrimaryKey = isPrimaryKey;
-    this.isUnique = isUnique;
+    // Primary keys are always unique
+    this.isUnique = isUnique || isPrimaryKey;
     
     // Map: value -> Set of row indices
     // For unique indexes, each value maps to a single row index

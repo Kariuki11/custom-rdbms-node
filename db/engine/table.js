@@ -453,10 +453,25 @@ class Table {
     // Restore rows
     table.rows = json.rows;
     
-    // Restore indexes
+    // Rebuild indexes from rows (more reliable than restoring from JSON)
+    // Clear existing indexes first
     table.indexes = {};
-    for (const [columnName, indexJson] of Object.entries(json.indexes)) {
-      table.indexes[columnName] = Index.fromJSON(indexJson);
+    for (const column of table.columns) {
+      if (column.primaryKey) {
+        table.indexes[column.name] = new Index(column.name, true, true);
+      } else if (column.unique) {
+        table.indexes[column.name] = new Index(column.name, false, true);
+      }
+    }
+    
+    // Rebuild indexes by adding all rows
+    for (let i = 0; i < table.rows.length; i++) {
+      const row = table.rows[i];
+      for (const columnName in table.indexes) {
+        if (columnName in row) {
+          table.indexes[columnName].add(row[columnName], i);
+        }
+      }
     }
 
     return table;
