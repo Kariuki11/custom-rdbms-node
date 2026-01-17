@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, '../public'))); // Serve static file
 // Initialize database
 let db;
 async function initializeDatabase() {
-  const dbPath = process.env.DB_FILE || path.join(__dirname, '../data/dump.json');
+  const dbPath = process.env.DB_FILE || path.join(__dirname, '../../data/dump.json');
   db = new DB(dbPath);
   await db.initialize();
   app.set('db', db);

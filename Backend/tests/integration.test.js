@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs').promises;
 
 // Use a test database file
-const TEST_DB_PATH = path.join(__dirname, '../data/test-dump.json');
+const TEST_DB_PATH = path.join(__dirname, '../../data/test-dump.json');
 
 describe('Database Integration', () => {
   let db;

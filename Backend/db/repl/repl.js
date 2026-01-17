@@ -16,7 +16,7 @@ const DB = require('../index');
  */
 async function startREPL() {
   // Initialize database
-  const dbPath = process.env.DB_FILE || path.join(__dirname, '../../data/dump.json');
+  const dbPath = process.env.DB_FILE || path.join(__dirname, '../../../data/dump.json');
   const db = new DB(dbPath);
   
   console.log('Initializing database...');

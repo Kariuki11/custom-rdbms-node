@@ -11,7 +11,7 @@ const DB = require('../db/index');
 async function setupDemo() {
   console.log('Setting up demo database...\n');
 
-  const dbPath = path.join(__dirname, '../data/dump.json');
+  const dbPath = path.join(__dirname, '../../data/dump.json');
   const db = new DB(dbPath);
   await db.initialize();
 

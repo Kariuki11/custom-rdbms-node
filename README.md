@@ -105,13 +105,15 @@ Persistence Layer (JSON file)
 cd Pesapal-Interview
 ```
 
-2. Install dependencies:
+2. Navigate to the Backend folder and install dependencies:
 ```bash
+cd Backend
 npm install
 ```
 
-3. Create the data directory (if it doesn't exist):
+3. Create the data directory in the root (if it doesn't exist):
 ```bash
+cd ..
 mkdir -p data
 ```
 
@@ -122,6 +124,7 @@ mkdir -p data
 Start the interactive REPL:
 
 ```bash
+cd Backend
 npm run repl
 ```
 
@@ -151,6 +154,7 @@ db> exit
 Start the HTTP server:
 
 ```bash
+cd Backend
 npm start
 ```
 
@@ -320,12 +324,14 @@ This RDBMS is designed as a learning project and has several limitations:
 Run the test suite:
 
 ```bash
+cd Backend
 npm test
 ```
 
 Run tests in watch mode:
 
 ```bash
+cd Backend
 npm run test:watch
 ```
 
@@ -341,47 +347,53 @@ The test suite includes:
 ## Project Structure
 
 ```
-backend/
-├── db/
-│   ├── engine/
-│   │   ├── database.js      # Database class (table management)
-│   │   ├── table.js         # Table class (rows, CRUD)
-│   │   ├── column.js        # Column class (type validation)
-│   │   ├── index.js         # Index class (fast lookups)
-│   │   └── storage.js       # Persistence layer
+Pesapal-Interview/
+├── Backend/                 # All backend code
+│   ├── db/
+│   │   ├── engine/
+│   │   │   ├── database.js      # Database class (table management)
+│   │   │   ├── table.js         # Table class (rows, CRUD)
+│   │   │   ├── column.js        # Column class (type validation)
+│   │   │   ├── index.js         # Index class (fast lookups)
+│   │   │   └── storage.js       # Persistence layer
+│   │   │
+│   │   ├── sql/
+│   │   │   ├── tokenizer.js     # SQL tokenizer
+│   │   │   ├── parser.js        # SQL parser
+│   │   │   └── ast.js           # AST node definitions
+│   │   │
+│   │   ├── executor/
+│   │   │   ├── select.js        # SELECT executor
+│   │   │   ├── insert.js        # INSERT executor
+│   │   │   ├── update.js        # UPDATE executor
+│   │   │   ├── delete.js        # DELETE executor
+│   │   │   └── join.js          # JOIN executor
+│   │   │
+│   │   ├── repl/
+│   │   │   └── repl.js          # Interactive REPL
+│   │   │
+│   │   └── index.js             # Main DB interface
 │   │
-│   ├── sql/
-│   │   ├── tokenizer.js     # SQL tokenizer
-│   │   ├── parser.js        # SQL parser
-│   │   └── ast.js           # AST node definitions
+│   ├── server/
+│   │   ├── app.js               # Express application
+│   │   ├── routes/
+│   │   │   └── tableRoutes.js   # API routes
+│   │   └── controllers/
+│   │       └── tableController.js # Request handlers
 │   │
-│   ├── executor/
-│   │   ├── select.js        # SELECT executor
-│   │   ├── insert.js        # INSERT executor
-│   │   ├── update.js        # UPDATE executor
-│   │   ├── delete.js        # DELETE executor
-│   │   └── join.js          # JOIN executor
-│   │
-│   ├── repl/
-│   │   └── repl.js          # Interactive REPL
-│   │
-│   └── index.js             # Main DB interface
+│   ├── tests/                   # Test files
+│   ├── public/                  # Static files (web demo)
+│   ├── scripts/                 # Utility scripts
+│   ├── package.json
+│   └── jest.config.js
 │
-├── server/
-│   ├── app.js               # Express application
-│   ├── routes/
-│   │   └── tableRoutes.js   # API routes
-│   └── controllers/
-│       └── tableController.js # Request handlers
+├── data/                        # Database storage (outside Backend)
+│   └── dump.json
 │
-├── tests/                   # Test files
-│
-├── data/
-│   └── dump.json            # Database storage file
-│
-├── package.json
-├── jest.config.js
-└── README.md
+├── README.md                    # Main documentation
+├── ARCHITECTURE_WALKTHROUGH.md   # Architecture guide
+├── CODE_EXPLORATION_GUIDE.md    # Code exploration guide
+└── QUICKSTART.md                # Quick start guide
 ```
 
 ## Example: Building a Simple Web App

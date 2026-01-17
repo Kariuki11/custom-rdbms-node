@@ -18,7 +18,7 @@ class DB {
    * Creates a new database instance
    * @param {string} storagePath - Path to the storage file
    */
-  constructor(storagePath = './data/dump.json') {
+  constructor(storagePath = '../data/dump.json') {
     this.storage = new Storage(storagePath);
     this.database = null; // Will be loaded from storage
   }
