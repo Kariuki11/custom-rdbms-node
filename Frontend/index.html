@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom RDBMS Backend Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>Custom RDBMS Backend Demo</h1>
+            <p class="subtitle">Minimal frontend for CRUD and database validation</p>
+        </header>
+
+        <!-- Status Message Section -->
+        <div id="statusMessage" class="status-message"></div>
+
+        <!-- Record Creation Section (INSERT) -->
+        <section class="section">
+            <h2>Create New Record</h2>
+            <form id="createForm" class="form">
+                <div class="form-group">
+                    <label for="tableName">Table Name:</label>
+                    <input type="text" id="tableName" name="tableName" value="users" required>
+                </div>
+                <div class="form-group">
+                    <label for="recordId">ID:</label>
+                    <input type="number" id="recordId" name="id" required>
+                </div>
+                <div class="form-group">
+                    <label for="recordName">Name:</label>
+                    <input type="text" id="recordName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="recordEmail">Email:</label>
+                    <input type="email" id="recordEmail" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Record</button>
+            </form>
+        </section>
+
+        <!-- Record Listing Section (SELECT) -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Records</h2>
+                <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+            </div>
+            <div id="recordsContainer">
+                <p class="loading">Loading records...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(express.static(path.join(__dirname, '../public'))); // Serve static files
+app.use('/frontend', express.static(path.join(__dirname, '../../Frontend'))); // Serve frontend files
 
 // Initialize database
 let db;
