@@ -1,466 +1,313 @@
-# Custom Lightweight RDBMS Backend
+# Custom RDBMS: A Database Built From Scratch
 
-A fully functional relational database management system (RDBMS) built from scratch using Node.js and JavaScript. This project implements a complete database engine with SQL-like query interface, interactive REPL, and RESTful HTTP API.
+Welcome! This is a complete relational database management system (RDBMS) that I built from the ground up using Node.js and JavaScript. No external database libraries, no ORMs, no shortcuts—just pure understanding of how databases work under the hood.
 
-## Table of Contents
+## What This Project Is All About
 
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Documentation](#api-documentation)
-- [Design Decisions](#design-decisions)
-- [Limitations](#limitations)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
+Think of this as a working database engine that you can actually use. It's like building a car engine from scratch—you understand every part, how it connects, and why it works. This project demonstrates:
 
-## Overview
+- How databases store and organize data
+- How SQL queries get parsed and executed
+- How indexes make lookups fast
+- How constraints keep data consistent
+- How everything persists to disk
 
-This RDBMS is a complete database system implementation that includes:
+You can interact with it in two ways: through a command-line interface (REPL) where you type SQL queries, or through a web interface that lets you click around and see your data. Both connect to the same database engine underneath.
 
-- **Database Engine**: Core storage and retrieval system with tables, rows, and indexes
-- **SQL Parser**: Tokenizer and parser for SQL-like queries
-- **Query Executor**: Handles SELECT, INSERT, UPDATE, DELETE, and JOIN operations
-- **Indexing System**: Primary key and unique constraint enforcement with O(1) lookups
-- **Persistence Layer**: JSON-based file storage
-- **REPL Interface**: Interactive command-line interface
-- **HTTP API**: RESTful endpoints for CRUD operations
+## The Big Picture: How Everything Works Together
 
-## Architecture
+Here's the simple version: You have data that needs to be stored, queried, and managed. This project does that in three layers:
 
-### High-Level Architecture
+1. **The Backend** - The brain of the operation. It's a complete database engine that understands SQL, stores your data, enforces rules, and makes everything fast with indexes.
 
-```
-Client (REPL / HTTP)
-        |
-        v
-SQL Interface / API Layer
-        |
-        v
-Query Parser & AST Builder
-        |
-        v
-Query Execution Engine
-        |
-        v
-Storage Engine (Tables, Rows, Indexes)
-        |
-        v
-Persistence Layer (JSON file)
-```
+2. **The Frontend** - A simple web interface that lets you interact with the database without writing SQL. It's intentionally minimal—just enough to prove the backend works correctly.
 
-### Core Subsystems
+3. **The Storage** - Everything gets saved to a JSON file on disk, so your data sticks around even after you close the application.
 
-| Subsystem | Responsibility |
-|-----------|---------------|
-| **Database Engine** | Manages tables, schemas, rows |
-| **SQL Layer** | Parses SQL into executable structures |
-| **Execution Engine** | Performs CRUD & JOIN operations |
-| **Index Manager** | Enforces PK & UNIQUE constraints |
-| **Persistence Layer** | Saves & loads data |
-| **REPL** | Interactive DB access |
-| **HTTP API** | External access to DB |
+When you create a record through the frontend, it sends an HTTP request to the backend. The backend parses that request, converts it to SQL, executes it against the database engine, saves the result to disk, and sends a response back. The frontend then shows you what happened. It's a complete cycle from user action to persistent storage.
 
-## Features
+## Understanding the Backend
 
-### Supported SQL Operations
+The backend is where all the magic happens. It's a full database system with several key components working together:
 
-- **CREATE TABLE**: Define table schemas with columns and constraints
-- **INSERT**: Add rows to tables
-- **SELECT**: Query data with WHERE clauses
-- **UPDATE**: Modify existing rows
-- **DELETE**: Remove rows
-- **JOIN**: Inner joins between tables
+### The Database Engine
 
-### Data Types
+At its core, you have tables that hold rows of data. Each table has a schema (what columns exist, what types they are) and constraints (like "this ID must be unique"). When you insert data, the engine validates it against the schema, checks constraints, and stores it efficiently.
 
-- `INT`: Integer values
-- `TEXT`: String values
-- `BOOLEAN`: Boolean values (true/false)
+### SQL Processing
 
-### Constraints
+When you write a SQL query like `SELECT * FROM users WHERE id = 1`, the backend doesn't just execute it blindly. It goes through a process:
 
-- **PRIMARY KEY**: Unique identifier for rows (enforced with index)
-- **UNIQUE**: Ensures column values are unique (enforced with index)
+1. **Tokenization** - Breaks your SQL string into meaningful pieces (keywords, identifiers, operators)
+2. **Parsing** - Builds a tree structure (called an AST) that represents what you want to do
+3. **Execution** - Walks through that tree and performs the actual operations
 
-### Indexing
+This is exactly how real databases work—they parse your SQL into an internal representation, then execute it.
 
-- Automatic index creation for PRIMARY KEY columns
-- Automatic index creation for UNIQUE columns
-- O(1) lookups for indexed columns
-- Fallback to table scan for non-indexed queries
+### Indexing for Speed
 
-## Installation
+If you have a million rows and want to find one by its ID, you don't want to check every single row. That's where indexes come in. The backend automatically creates indexes for primary keys and unique columns, which let it find rows in constant time (O(1)) instead of scanning everything.
+
+### Persistence
+
+Everything you do gets saved to a JSON file. When you start the backend, it loads that file into memory. When you make changes, it writes them back. Simple, but effective for demonstrating how databases persist data.
+
+### Two Ways to Interact
+
+The backend exposes two interfaces:
+
+- **REPL (Read-Eval-Print Loop)** - A command-line interface where you type SQL directly. Great for learning and testing.
+- **HTTP API** - RESTful endpoints that the frontend (or any other client) can call. This is how modern applications would interact with it.
+
+Both interfaces use the exact same database engine underneath, so you get consistent behavior whether you're typing SQL or clicking buttons.
+
+## Understanding the Frontend
+
+The frontend is intentionally simple. Its entire purpose is to demonstrate that the backend works correctly. It's not trying to be a beautiful, production-ready application—it's a validation tool.
+
+### What It Does
+
+The frontend provides a web interface where you can:
+
+- **Create records** - Fill out a form, click submit, and see your data appear
+- **View records** - See all your data in a clean table
+- **Update records** - Click edit, change values, and see the update happen
+- **Delete records** - Remove records and watch them disappear
+
+Every action you take in the frontend translates to an HTTP request to the backend. The backend processes it, updates the database, and sends back a response. The frontend then updates what you see on screen.
+
+### Why It's Minimal
+
+This frontend exists to prove a point: that the backend API works correctly, that constraints are enforced, that data persists, and that the whole system integrates properly. It's built with plain HTML, CSS, and JavaScript—no frameworks, no complexity. Just enough to validate the backend functionality.
+
+If you're evaluating this project, the frontend shows you that:
+- CRUD operations work end-to-end
+- Error handling is proper (try creating a duplicate ID and see what happens)
+- Data persists across page refreshes
+- The API design is correct
+
+## Getting Started: From Clone to Running
+
+Let's get this thing running on your machine. I'll walk you through it step by step.
 
 ### Prerequisites
 
-- Node.js (LTS version recommended)
-- npm or yarn
+You'll need Node.js installed. If you don't have it, grab it from [nodejs.org](https://nodejs.org/). Any LTS version will work fine. The project uses npm (which comes with Node.js) to manage dependencies.
 
-### Setup
+### Step 1: Clone the Repository
 
-1. Clone or navigate to the project directory:
+First, get the code onto your machine:
+
 ```bash
+git clone <repository-url>
 cd Pesapal-Interview
 ```
 
-2. Navigate to the Backend folder and install dependencies:
+Or if you already have the code, just navigate to the `Pesapal-Interview` directory.
+
+### Step 2: Install Backend Dependencies
+
+The backend needs a few npm packages to run. Let's install them:
+
 ```bash
 cd Backend
 npm install
 ```
 
-3. Create the data directory in the root (if it doesn't exist):
+This will read the `package.json` file and download all the required dependencies (like Express for the HTTP server). It might take a minute the first time.
+
+### Step 3: Set Up the Data Directory
+
+The database needs a place to store its data file. Let's create that:
+
 ```bash
 cd ..
 mkdir -p data
 ```
 
-## Usage
+This creates a `data` folder in the root of the project where the database will save `dump.json` (your actual database file).
 
-### REPL Mode
+### Step 4: (Optional) Set Up Demo Data
 
-Start the interactive REPL:
+Want to see it in action right away? You can populate the database with some sample data:
 
 ```bash
 cd Backend
-npm run repl
+npm run setup-demo
 ```
 
-Example session:
+This creates a `users` table and a `posts` table with some example records. Totally optional, but helpful for testing.
 
-```sql
-db> CREATE TABLE users (id INT PRIMARY KEY, name TEXT, email TEXT UNIQUE);
+### Step 5: Start the Backend Server
 
-db> INSERT INTO users (id, name, email) VALUES (1, 'Alice', 'alice@example.com');
-
-db> SELECT * FROM users WHERE id = 1;
-id | name  | email
----+-------+------------------
-1  | Alice | alice@example.com
-
-(1 row)
-
-db> UPDATE users SET name = 'Alice Smith' WHERE id = 1;
-
-db> DELETE FROM users WHERE id = 1;
-
-db> exit
-```
-
-### HTTP API Server
-
-Start the HTTP server:
+Now let's fire up the backend:
 
 ```bash
 cd Backend
 npm start
 ```
 
-The server will start on `http://localhost:3000` (or the port specified in `.env`).
+You should see something like:
+```
+Database initialized and connected
+Server running on http://localhost:3000
+Health check: http://localhost:3000/health
+API base: http://localhost:3000/api
+```
 
-### Example API Requests
+Great! The backend is now running and waiting for requests. Keep this terminal window open.
 
-#### Create a Row
+### Step 6: Open the Frontend
+
+With the backend running, you can access the frontend in your browser:
+
+**Option 1: Via Backend Server (Recommended)**
+```
+http://localhost:3000/frontend/
+```
+
+The backend serves the frontend files, so this is the easiest way.
+
+**Option 2: Direct File Access**
+Just open `Frontend/index.html` directly in your browser. Note: You might run into CORS issues this way, so Option 1 is better.
+
+### Step 7: Test It Out!
+
+Now the fun part—let's verify everything works:
+
+1. **Create a Record:**
+   - In the frontend, fill out the form (ID: 1, Name: Alice, Email: alice@example.com)
+   - Click "Create Record"
+   - You should see a success message and the record appear in the table
+
+2. **Test Constraints:**
+   - Try creating another record with the same ID
+   - You should see an error about duplicate primary key
+   - This proves the backend is enforcing constraints!
+
+3. **Update a Record:**
+   - Click "Edit" on a record
+   - Change the name
+   - See it update in the table
+
+4. **Delete a Record:**
+   - Click "Delete" on a record
+   - Confirm the deletion
+   - Watch it disappear
+
+5. **Test Persistence:**
+   - Create a few records
+   - Refresh the page
+   - Your records should still be there!
+   - This proves data is persisting to disk
+
+### Alternative: Using the REPL
+
+If you prefer the command line, you can interact with the database directly using SQL:
 
 ```bash
-POST http://localhost:3000/api/users
-Content-Type: application/json
-
-{
-  "id": 1,
-  "name": "Alice",
-  "email": "alice@example.com"
-}
+cd Backend
+npm run repl
 ```
 
-#### Get All Rows
+Then you can type SQL queries:
 
-```bash
-GET http://localhost:3000/api/users
+```sql
+db> SELECT * FROM users;
+db> INSERT INTO users (id, name, email) VALUES (2, 'Bob', 'bob@example.com');
+db> UPDATE users SET name = 'Robert' WHERE id = 2;
+db> DELETE FROM users WHERE id = 2;
+db> exit
 ```
 
-#### Get a Specific Row
+The REPL and the frontend both use the same database, so changes in one are visible in the other.
 
-```bash
-GET http://localhost:3000/api/users?id=1
-```
+## Running Tests
 
-#### Update a Row
-
-```bash
-PUT http://localhost:3000/api/users/1
-Content-Type: application/json
-
-{
-  "name": "Alice Smith"
-}
-```
-
-#### Delete a Row
-
-```bash
-DELETE http://localhost:3000/api/users/1
-```
-
-## API Documentation
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check endpoint |
-| `GET` | `/` | API information |
-| `POST` | `/api/:tableName` | Create a new row |
-| `GET` | `/api/:tableName` | Get all rows (or specific row with `?id=:id`) |
-| `PUT` | `/api/:tableName/:id` | Update a row by primary key |
-| `DELETE` | `/api/:tableName/:id` | Delete a row by primary key |
-
-### Response Format
-
-**Success Response:**
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": { ... }
-}
-```
-
-**Error Response:**
-```json
-{
-  "success": false,
-  "error": "Error message"
-}
-```
-
-### HTTP Status Codes
-
-- `200`: Success
-- `201`: Created
-- `400`: Bad Request (validation errors)
-- `404`: Not Found
-- `409`: Conflict (duplicate key)
-- `500`: Internal Server Error
-
-## Design Decisions
-
-### Storage Strategy
-
-**Decision**: JSON-based file storage
-
-**Rationale**:
-- Simple to implement and debug
-- Human-readable format
-- Sufficient for a lightweight RDBMS
-- Easy to backup and restore
-
-**Trade-offs**:
-- Not suitable for large datasets (entire database loaded into memory)
-- No concurrent access support
-- Performance degrades with large files
-
-### Index Implementation
-
-**Decision**: Map-based indexes for O(1) lookups
-
-**Rationale**:
-- Fast lookups for primary keys and unique columns
-- Simple to implement and maintain
-- Efficient for small to medium datasets
-
-**Trade-offs**:
-- Indexes are rebuilt after deletions (simplified approach)
-- Memory overhead for maintaining indexes
-- No composite indexes
-
-### SQL Parser
-
-**Decision**: Recursive descent parser with tokenizer
-
-**Rationale**:
-- Clear separation of concerns (tokenization vs parsing)
-- Easy to extend with new SQL features
-- Good error reporting
-
-**Trade-offs**:
-- Limited SQL grammar (no subqueries, aggregations, etc.)
-- No query optimization
-- Basic error messages
-
-### Join Strategy
-
-**Decision**: Nested loop join with index optimization
-
-**Rationale**:
-- Simple to implement
-- Works for small datasets
-- Index join optimization for better performance
-
-**Trade-offs**:
-- O(n*m) complexity for non-indexed joins
-- No hash joins or merge joins
-- Limited to INNER JOIN
-
-## Limitations
-
-This RDBMS is designed as a learning project and has several limitations:
-
-1. **No Transactions**: No ACID guarantees or transaction support
-2. **No Concurrency**: Single-threaded, no concurrent access
-3. **No Query Optimization**: No query planner or optimizer
-4. **Limited SQL Grammar**: No subqueries, aggregations, GROUP BY, ORDER BY, etc.
-5. **No Authentication**: No security features
-6. **Memory-Based**: Entire database loaded into memory
-7. **No Foreign Keys**: No referential integrity enforcement
-8. **Basic Error Handling**: Limited error recovery
-9. **No Backup/Recovery**: No built-in backup mechanisms
-10. **Single File Storage**: All data in one JSON file
-
-## Testing
-
-Run the test suite:
+Want to verify everything works programmatically? The project includes a comprehensive test suite:
 
 ```bash
 cd Backend
 npm test
 ```
 
-Run tests in watch mode:
+This runs all the tests and shows you what passes and what fails. You should see all tests passing if everything is set up correctly.
 
-```bash
-cd Backend
-npm run test:watch
-```
-
-### Test Coverage
-
-The test suite includes:
-
-- **Unit Tests**: Individual component testing (Column, Index, Table, Database)
-- **Integration Tests**: End-to-end database operations
-- **SQL Parser Tests**: Tokenization and parsing validation
-- **Constraint Tests**: Primary key and unique constraint enforcement
+The tests cover:
+- Individual components (columns, indexes, tables)
+- SQL parsing and execution
+- Constraint enforcement
+- End-to-end integration scenarios
 
 ## Project Structure
 
+Here's how the code is organized:
+
 ```
 Pesapal-Interview/
-├── Backend/                 # All backend code
-│   ├── db/
-│   │   ├── engine/
-│   │   │   ├── database.js      # Database class (table management)
-│   │   │   ├── table.js         # Table class (rows, CRUD)
-│   │   │   ├── column.js        # Column class (type validation)
-│   │   │   ├── index.js         # Index class (fast lookups)
-│   │   │   └── storage.js       # Persistence layer
-│   │   │
-│   │   ├── sql/
-│   │   │   ├── tokenizer.js     # SQL tokenizer
-│   │   │   ├── parser.js        # SQL parser
-│   │   │   └── ast.js           # AST node definitions
-│   │   │
-│   │   ├── executor/
-│   │   │   ├── select.js        # SELECT executor
-│   │   │   ├── insert.js        # INSERT executor
-│   │   │   ├── update.js        # UPDATE executor
-│   │   │   ├── delete.js        # DELETE executor
-│   │   │   └── join.js          # JOIN executor
-│   │   │
-│   │   ├── repl/
-│   │   │   └── repl.js          # Interactive REPL
-│   │   │
-│   │   └── index.js             # Main DB interface
-│   │
-│   ├── server/
-│   │   ├── app.js               # Express application
-│   │   ├── routes/
-│   │   │   └── tableRoutes.js   # API routes
-│   │   └── controllers/
-│   │       └── tableController.js # Request handlers
-│   │
-│   ├── tests/                   # Test files
-│   ├── public/                  # Static files (web demo)
-│   ├── scripts/                 # Utility scripts
-│   ├── package.json
-│   └── jest.config.js
+├── Backend/              # All the database engine code
+│   ├── db/               # Core database engine
+│   │   ├── engine/       # Tables, indexes, storage
+│   │   ├── sql/          # SQL parser and tokenizer
+│   │   ├── executor/     # Query executors
+│   │   └── repl/         # Command-line interface
+│   ├── server/           # HTTP API server
+│   ├── tests/            # Test suite
+│   └── package.json      # Dependencies
 │
-├── data/                        # Database storage (outside Backend)
-│   └── dump.json
+├── Frontend/             # Simple web interface
+│   ├── index.html        # Main UI
+│   ├── styles.css        # Styling
+│   └── app.js            # API integration
 │
-├── README.md                    # Main documentation
-├── ARCHITECTURE_WALKTHROUGH.md   # Architecture guide
-├── CODE_EXPLORATION_GUIDE.md    # Code exploration guide
-└── QUICKSTART.md                # Quick start guide
+├── data/                 # Database storage
+│   └── dump.json         # Your actual database file
+│
+└── README.md             # This file
 ```
 
-## Example: Building a Simple Web App
+## What You Can Learn From This
 
-Here's a minimal example of using the RDBMS in a web application:
+This project demonstrates several important concepts:
 
-### 1. Create Tables (via REPL or API)
+- **Database Internals** - How data is stored, indexed, and retrieved
+- **SQL Processing** - How SQL gets parsed and executed
+- **API Design** - How to expose database functionality via HTTP
+- **System Integration** - How frontend and backend work together
+- **Constraint Enforcement** - How databases maintain data integrity
+- **Persistence** - How data survives application restarts
 
-```sql
-CREATE TABLE users (
-  id INT PRIMARY KEY,
-  name TEXT,
-  email TEXT UNIQUE
-);
+## Limitations and Trade-offs
 
-CREATE TABLE posts (
-  id INT PRIMARY KEY,
-  user_id INT,
-  title TEXT,
-  content TEXT
-);
-```
+This is a learning project, not a production database. Here are some things it doesn't do (by design):
 
-### 2. Use HTTP API
+- No transactions or ACID guarantees
+- No concurrent access (single-threaded)
+- No query optimization
+- Limited SQL grammar (no subqueries, aggregations, etc.)
+- Entire database loaded in memory
+- No authentication or security
 
-```javascript
-// Create a user
-fetch('http://localhost:3000/api/users', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    id: 1,
-    name: 'Alice',
-    email: 'alice@example.com'
-  })
-});
+These limitations are intentional—they keep the codebase understandable and focused on core concepts.
 
-// Get all users
-fetch('http://localhost:3000/api/users')
-  .then(res => res.json())
-  .then(data => console.log(data));
+## Next Steps
 
-// Create a post
-fetch('http://localhost:3000/api/posts', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    id: 1,
-    user_id: 1,
-    title: 'Hello World',
-    content: 'My first post'
-  })
-});
-```
+Once you have it running:
 
-### 3. Query with JOIN (via REPL)
+1. **Explore the Code** - Check out `ARCHITECTURE_WALKTHROUGH.md` for a deep dive into how everything works
+2. **Read the Tests** - The test files show you how each component is supposed to behave
+3. **Try the REPL** - Experiment with SQL queries and see what happens
+4. **Modify Things** - Add a feature, break something, fix it. That's how you learn!
 
-```sql
-SELECT users.name, posts.title
-FROM users
-JOIN posts ON users.id = posts.user_id;
-```
+## Final Thoughts
 
-## Credits
+This project represents a complete understanding of database fundamentals. Every line of code was written to demonstrate a concept, solve a problem, or make something work. There are no black boxes—if you read the code, you'll understand exactly what's happening.
 
-This project was built from scratch as a demonstration of database internals understanding. No external database libraries or ORMs were used - all functionality was implemented manually.
+The frontend is minimal because the backend is the star. The backend is where the real engineering happens, where the database concepts come to life, and where the learning value exists.
 
-## License
+Enjoy exploring it, and feel free to dig into the code. Everything is commented and organized to be as clear as possible.
 
-MIT
+---
+
+**Built with:** Node.js, JavaScript, HTML, CSS  
+**License:** MIT
