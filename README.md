@@ -99,8 +99,7 @@ You'll need Node.js installed. If you don't have it, grab it from [nodejs.org](h
 First, get the code onto your machine:
 
 ```bash
-git clone <repository-url>
-cd Pesapal-Interview
+git clone https://github.com/Kariuki11/custom-rdbms-node.git
 ```
 
 Or if you already have the code, just navigate to the `Pesapal-Interview` directory.
